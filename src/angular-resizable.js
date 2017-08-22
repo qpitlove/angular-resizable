@@ -24,6 +24,7 @@ angular.module('angularResizable', [])
                 rGrabber: '@',
                 rDisabled: '@',
                 rNoThrottle: '=',
+                rDisableResize: '=',
                 resizable: '@',
                 rOnResizeStart: '&',
                 rOnResizing: '&',
@@ -122,6 +123,10 @@ angular.module('angularResizable', [])
                     element.removeClass('no-transition');
                 };
                 var dragStart = function(e, direction) {
+                    if(scope.rDisableResize){
+                        return;
+                    }
+
                     dragDir = direction;
                     axis = dragDir === 'left' || dragDir === 'right' ? 'x' : 'y';
                     start = axis === 'x' ? getClientX(e) : getClientY(e);
@@ -154,7 +159,8 @@ angular.module('angularResizable', [])
                     // add class for styling purposes
                     grabber.setAttribute('class', 'rg-' + direction);
                     grabber.innerHTML = inner;
-                    element[0].appendChild(grabber);
+                    // element[0].appendChild(grabber);
+                    element[(direction === 'top' || direction === 'left') ? 'prepend' : 'append'](grabber);
                     grabber.ondragstart = function() { return false; };
 
                     var down = function(e) {
